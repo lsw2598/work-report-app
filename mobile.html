@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>작업량 보고</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .form-container {
+            padding: 30px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .quantity-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .quantity-group input {
+            flex: 2;
+        }
+
+        .quantity-group select {
+            flex: 1;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 25px 15px;
+            }
+            
+            .form-container {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 작업량 보고</h1>
+            <p>외부 작업 현황을 실시간으로 전송하세요</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="workReportForm">
+                <div class="form-group">
+                    <label for="workerName">작업자 이름</label>
+                    <input type="text" id="workerName" name="workerName" required placeholder="이름을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="workType">작업 유형</label>
+                    <select id="workType" name="workType" required>
+                        <option value="">작업 유형을 선택하세요</option>
+                        <option value="건설">건설</option>
+                        <option value="정비">정비</option>
+                        <option value="청소">청소</option>
+                        <option value="운반">운반</option>
+                        <option value="조립">조립</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quantity">작업량</label>
+                    <div class="quantity-group">
+                        <input type="number" id="quantity" name="quantity" required placeholder="수량" min="1">
+                        <select id="unit" name="unit" required>
+                            <option value="개">개</option>
+                            <option value="kg">kg</option>
+                            <option value="m">m</option>
+                            <option value="m²">m²</option>
+                            <option value="시간">시간</option>
+                            <option value="건">건</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">작업 위치</label>
+                    <input type="text" id="location" name="location" placeholder="작업 위치를 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">비고</label>
+                    <textarea id="notes" name="notes" placeholder="추가 사항이나 특이사항을 입력하세요"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    📤 전송하기
+                </button>
+            </form>
+            
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('workReportForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const data = {
+                workerName: formData.get('workerName'),
+                workType: formData.get('workType'),
+                quantity: parseInt(formData.get('quantity')),
+                unit: formData.get('unit'),
+                location: formData.get('location'),
+                notes: formData.get('notes')
+            };
+
+            // 버튼 비활성화
+            submitBtn.disabled = true;
+            submitBtn.textContent = '📤 전송 중...';
+
+            try {
+                const response = await fetch('/api/report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('✅ 작업량이 성공적으로 전송되었습니다!', 'success');
+                    form.reset();
+                } else {
+                    showStatus('❌ 전송에 실패했습니다. 다시 시도해주세요.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('❌ 네트워크 오류가 발생했습니다.', 'error');
+            } finally {
+                // 버튼 활성화
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📤 전송하기';
+            }
+        });
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // 페이지 로드 시 작업자 이름 자동 포커스
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('workerName').focus();
+        });
+    </script>
+</body>
+</html>
